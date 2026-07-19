@@ -1,0 +1,11 @@
+﻿@{
+    ViewBag.Title = "Đặt hàng thành công";
+}
+
+<div class="container mt-5 text-center">
+    <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
+    <h2 class="mt-3">Cảm ơn bạn đã đặt hàng!</h2>
+    <p>Mã đơn hàng của bạn là <strong>#@ViewBag.OrderId</strong></p>
+    <p>Chúng tôi sẽ liên hệ xác nhận trong thời gian sớm nhất.</p>
+    <a href="@Url.Action("Index", "Product")" class="btn btn-primary btn-lg mt-3">Tiếp tục mua sắm</a>
+</div>

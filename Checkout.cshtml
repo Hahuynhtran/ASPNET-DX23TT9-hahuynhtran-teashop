@@ -1,0 +1,41 @@
+﻿@model TeaShopWeb.Models.Order
+
+@{
+    ViewBag.Title = "Thanh toán";
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary">📝 Thông tin giao hàng</h2>
+    <hr />
+    @using (Html.BeginForm("PlaceOrder", "Cart", FormMethod.Post, new { @class = "row g-3" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="col-md-6">
+            <label class="form-label">Họ tên người nhận</label>
+            @Html.TextBoxFor(m => m.ShippingAddress, new { @class = "form-control", placeholder = "Nhập họ tên" })
+            @Html.ValidationMessageFor(m => m.ShippingAddress)
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Số điện thoại</label>
+            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "SĐT nhận hàng" })
+            @Html.ValidationMessageFor(m => m.PhoneNumber)
+        </div>
+        <div class="col-12">
+            <label class="form-label">Địa chỉ giao hàng</label>
+            @Html.TextAreaFor(m => m.ShippingAddress, new { @class = "form-control", rows = 3, placeholder = "Số nhà, đường, phường, quận..." })
+            @Html.ValidationMessageFor(m => m.ShippingAddress)
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Phương thức thanh toán</label>
+            @Html.DropDownListFor(m => m.PaymentMethod, new SelectList(new[] { "Thanh toán khi nhận hàng", "Chuyển khoản ngân hàng" }), new { @class = "form-select" })
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Ghi chú</label>
+            @Html.TextBoxFor(m => m.Notes, new { @class = "form-control", placeholder = "Ghi chú thêm..." })
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-success btn-lg w-100">🛒 Xác nhận đặt hàng</button>
+        </div>
+    }
+</div>

@@ -1,38 +1,89 @@
-﻿@model IEnumerable<TeaShopWeb.Models.Product>
+﻿@model TeaShopWeb.Models.ShoppingCart
 
 @{
-    ViewBag.Title = "Quản lý sản phẩm";
+    ViewBag.Title = "Giỏ hàng";
 }
 
 <div class="container mt-4">
-    <h2>📋 Danh sách sản phẩm (Admin)</h2>
-    <p>
-        <a href="@Url.Action("Create", "AdminProduct")" class="btn btn-success">➕ Thêm sản phẩm</a>
-    </p>
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>Tên sản phẩm</th>
-                <th>Giá</th>
-                <th>Danh mục</th>
-                <th>Tồn kho</th>
-                <th>Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+    <h2 class="text-primary mb-4">🛒 Giỏ hàng của bạn</h2>
+
+    @if (Model.Items.Any())
+    {
+        <table class="table table-bordered table-hover">
+            <thead class="table-dark">
                 <tr>
-                    <td>@item.ProductName</td>
-                    <td>@String.Format("{0:N0}", item.Price)đ</td>
-                    <td>@(item.Category?.CategoryName ?? "N/A")</td>
-                    <td>@item.StockQuantity</td>
-                    <td>
-                        <a href="@Url.Action("Edit", "AdminProduct", new { id = item.Id })" class="btn btn-sm btn-primary">✏️ Sửa</a>
-                        <a href="@Url.Action("Delete", "AdminProduct", new { id = item.Id })" class="btn btn-sm btn-danger">🗑 Xóa</a>
-                    </td>
+                    <th>Sản phẩm</th>
+                    <th>Size</th>
+                    <th>Đơn giá</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                    <th></th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>
+                            <img src="@item.ImageUrl" width="50" height="50" />
+                            @item.ProductName
+                        </td>
+                        <td>@(item.SizeId == 0 ? "S" : item.SizeId == 1 ? "M" : "L")</td>
+                        <td>@String.Format("{0:N0}", item.Price)đ</td>
+                        <td>
+                            <input type="number" class="form-control quantity"
+                                   data-id="@item.ProductId" data-size="@item.SizeId"
+                                   value="@item.Quantity" min="1" style="width:80px;" />
+                        </td>
+                        <td>@String.Format("{0:N0}", item.Price * item.Quantity)đ</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger remove-item"
+                                    data-id="@item.ProductId" data-size="@item.SizeId">
+                                Xóa
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4" class="text-end fw-bold">Tổng cộng:</td>
+                    <td colspan="2" class="fw-bold text-danger">@String.Format("{0:N0}", Model.TotalAmount)đ</td>
+                </tr>
+            </tfoot>
+        </table>
+        <div class="d-flex justify-content-between">
+            <a href="@Url.Action("Index", "Product")" class="btn btn-secondary">← Tiếp tục mua</a>
+            <a href="@Url.Action("Checkout", "Cart")" class="btn btn-success">Thanh toán →</a>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <h4>Giỏ hàng trống!</h4>
+            <a href="@Url.Action("Index", "Product")" class="btn btn-primary mt-2">Xem sản phẩm</a>
+        </div>
+    }
 </div>
+
+@section scripts {
+    <script>
+        $(function () {
+            $('.quantity').change(function () {
+                var pid = $(this).data('id');
+                var sid = $(this).data('size');
+                var qty = $(this).val();
+                $.post('/Cart/UpdateCart', { productId: pid, sizeId: sid, quantity: qty }, function () {
+                    location.reload();
+                });
+            });
+            $('.remove-item').click(function () {
+                var pid = $(this).data('id');
+                var sid = $(this).data('size');
+                $.post('/Cart/RemoveFromCart', { productId: pid, sizeId: sid }, function () {
+                    location.reload();
+                });
+            });
+        });
+    </script>
+}
