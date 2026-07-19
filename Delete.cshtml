@@ -1,0 +1,25 @@
+﻿@model TeaShopWeb.Models.Product
+
+@{
+    ViewBag.Title = "Xóa sản phẩm";
+}
+
+<div class="container mt-4">
+    <h2 class="text-danger">⚠️ Xác nhận xóa</h2>
+    <p>Bạn có chắc muốn xóa sản phẩm <strong>@Model.ProductName</strong>?</p>
+    <dl class="row">
+        <dt class="col-sm-3">Giá</dt>
+        <dd class="col-sm-9">@String.Format("{0:N0}", Model.Price)đ</dd>
+        <dt class="col-sm-3">Ảnh</dt>
+        <dd class="col-sm-9">
+            <img src="@Model.ImageUrl" width="100" />
+        </dd>
+    </dl>
+    @using (Html.BeginForm("Delete", "AdminProduct", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.Id)
+        <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+        <a href="@Url.Action("Index")" class="btn btn-secondary">Hủy bỏ</a>
+    }
+</div>

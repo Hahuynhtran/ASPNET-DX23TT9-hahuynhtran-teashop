@@ -1,0 +1,38 @@
+﻿@model IEnumerable<TeaShopWeb.Models.Product>
+
+@{
+    ViewBag.Title = "Quản lý sản phẩm";
+}
+
+<div class="container mt-4">
+    <h2>📋 Danh sách sản phẩm (Admin)</h2>
+    <p>
+        <a href="@Url.Action("Create", "AdminProduct")" class="btn btn-success">➕ Thêm sản phẩm</a>
+    </p>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Tên sản phẩm</th>
+                <th>Giá</th>
+                <th>Danh mục</th>
+                <th>Tồn kho</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@String.Format("{0:N0}", item.Price)đ</td>
+                    <td>@(item.Category?.CategoryName ?? "N/A")</td>
+                    <td>@item.StockQuantity</td>
+                    <td>
+                        <a href="@Url.Action("Edit", "AdminProduct", new { id = item.Id })" class="btn btn-sm btn-primary">✏️ Sửa</a>
+                        <a href="@Url.Action("Delete", "AdminProduct", new { id = item.Id })" class="btn btn-sm btn-danger">🗑 Xóa</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
