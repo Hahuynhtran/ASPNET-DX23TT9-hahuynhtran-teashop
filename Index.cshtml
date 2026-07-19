@@ -1,37 +1,69 @@
-﻿@{
-    ViewBag.Title = "Trà Sữa Thốt Nốt - Trang chủ";
+﻿@model IEnumerable<TeaShopWeb.Models.Product>
+
+@{
+    ViewBag.Title = "Danh sách sản phẩm";
 }
 
-<div class="jumbotron text-center" style="background-color: #FFF8E7; border-radius: 20px; padding: 40px;">
-    <h1 style="color: #5D4037;">🧋 Chào mừng đến với Trà Sữa Thốt Nốt</h1>
-    <p class="lead" style="color: #8B5E3C;">Hương vị thốt nốt quê hương – Đậm đà khó quên</p>
-    <p>
-        <a href="@Url.Action("Index", "Product")" class="btn btn-primary btn-lg" style="background-color: #8B5E3C; border-color: #8B5E3C;">
-            🛒 Xem thực đơn ngay
-        </a>
-    </p>
-</div>
+<div class="container mt-4">
+    <h2 class="text-center text-primary mb-4">@ViewBag.Title</h2>
 
-<div class="row text-center">
-    <div class="col-md-4">
-        <div class="card" style="border: 1px solid #e0d5c1; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
-            <i class="fas fa-coffee" style="font-size: 3rem; color: #8B5E3C;"></i>
-            <h3>Nguyên liệu tự nhiên</h3>
-            <p>Thốt nốt tươi từ Trà Vinh, đảm bảo chất lượng.</p>
+    <!-- Thanh tìm kiếm và bộ lọc -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            @using (Html.BeginForm("Index", "Product", FormMethod.Get, new { @class = "d-flex" }))
+            {
+                <div class="input-group">
+                    <input type="text" name="searchTerm" class="form-control" placeholder="Tìm kiếm sản phẩm..." value="@ViewBag.SearchTerm" />
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
+                </div>
+            }
+        </div>
+        <div class="col-md-4">
+            @using (Html.BeginForm("Index", "Product", FormMethod.Get, new { @class = "d-flex" }))
+            {
+                <div class="input-group">
+                    <select name="categoryId" class="form-select">
+                        <option value="">Tất cả danh mục</option>
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            <option value="@category.Id" selected="@(ViewBag.SelectedCategory == category.Id)">@category.CategoryName</option>
+                        }
+                    </select>
+                    <button type="submit" class="btn btn-outline-secondary">Lọc</button>
+                </div>
+            }
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card" style="border: 1px solid #e0d5c1; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
-            <i class="fas fa-truck" style="font-size: 3rem; color: #8B5E3C;"></i>
-            <h3>Giao hàng nhanh</h3>
-            <p>Miễn phí giao hàng trong khu vực nội thành Trà Vinh.</p>
-        </div>
+
+    <!-- Danh sách sản phẩm -->
+    <div class="row">
+        @foreach (var product in Model)
+        {
+            <div class="col-md-3 col-sm-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="@(string.IsNullOrEmpty(product.ImageUrl) ? "/images/products/default.jpg" : product.ImageUrl)"
+                         class="card-img-top" alt="@product.ProductName" style="height: 200px; object-fit: cover;" />
+                    <div class="card-body">
+                        <h5 class="card-title text-truncate">@product.ProductName</h5>
+                        <p class="card-text text-danger fw-bold">@String.Format("{0:N0}", product.Price) VNĐ</p>
+                        <p class="card-text"><small class="text-muted">@(product.Category?.CategoryName ?? "Không có danh mục")</small></p>
+                    </div>
+                    <div class="card-footer bg-transparent border-0">
+                        <a href="@Url.Action("Details", new { id = product.Id })" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-eye"></i> Xem chi tiết
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
-    <div class="col-md-4">
-        <div class="card" style="border: 1px solid #e0d5c1; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
-            <i class="fas fa-star" style="font-size: 3rem; color: #8B5E3C;"></i>
-            <h3>Đánh giá cao</h3>
-            <p>Được sinh viên Đại học Trà Vinh yêu thích nhất 2026.</p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle"></i> Không tìm thấy sản phẩm nào.
         </div>
-    </div>
+    }
 </div>
